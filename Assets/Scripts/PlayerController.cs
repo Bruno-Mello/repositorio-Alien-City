@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour {
 	private Rigidbody2D rb2d;
 
 	public Transform posPe;
-	[HideInInspector] public bool tocaChao = false;
+	[HideInInspector] public bool tocaChao = true;
 
 
 	public float Velocidade;
@@ -51,6 +51,10 @@ public class PlayerController : MonoBehaviour {
 
             }
         }
+       /* if (Input.GetKeyDown(KeyCode.K))
+        {
+
+        }*/
 	}
 
 	void FixedUpdate()
@@ -59,11 +63,13 @@ public class PlayerController : MonoBehaviour {
 		float translationX = Input.GetAxis ("Horizontal") * Velocidade;
 		transform.Translate (translationX, translationY, 0);
 		transform.Rotate (0, 0, 0);
-		if (translationX != 0 && tocaChao) {
+		if (translationX != 0) {
 			anim.SetTrigger ("corre");
+            Debug.Log("correndo");
 		} else {
 			anim.SetTrigger("parado");
-		}
+            Debug.Log("parado");
+        }
 
 		//Programar o pulo Aqui! 
 
