@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour {
 	private Rigidbody2D rb2d;
 
 	public Transform posPe;
-	[HideInInspector] public bool tocaChao = true;
+	public bool tocaChao = true;
 
 
 	public float Velocidade;
@@ -17,13 +17,22 @@ public class PlayerController : MonoBehaviour {
 	[HideInInspector] public bool viradoDireita = true;
 
 	public Image vida;
+    public Image arma;
+    public Sprite arma_01;
+    public Sprite arma_02;
 	private MensagemControle MC;
+    private int armaNum = 1;
     public GameObject projectilePrefab;
+    public GameObject projectilePrefab_02;
     public GameObject tiro_origem;
 
 	void Start () {
+        
 		anim = GetComponent<Animator> ();
 		rb2d = GetComponent<Rigidbody2D> ();
+        
+        
+       
 
 		GameObject mensagemControleObject = GameObject.FindWithTag ("MensagemControle");
 		if (mensagemControleObject != null) {
@@ -36,8 +45,19 @@ public class PlayerController : MonoBehaviour {
         //Implementar Pulo Aqui! 
         if (Input.GetKeyDown(KeyCode.L))
         {
-            anim.SetTrigger("shoot");
-            GameObject projectile = GameObject.Instantiate(projectilePrefab, tiro_origem.transform.position, Quaternion.identity);
+            GameObject projectile = null;
+            if ( armaNum == 1)
+            {
+                anim.SetTrigger("shoot");
+                projectile = GameObject.Instantiate(projectilePrefab, tiro_origem.transform.position, Quaternion.identity);
+            }
+            else if (armaNum == 2)
+            {
+                anim.SetTrigger("shoot_02");
+                projectile = GameObject.Instantiate(projectilePrefab_02, tiro_origem.transform.position, Quaternion.identity);
+            }
+            
+            
             if (viradoDireita == true)
             {
 
@@ -51,10 +71,30 @@ public class PlayerController : MonoBehaviour {
 
             }
         }
-       /* if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))
         {
-
-        }*/
+            
+            armaNum += 1;
+            if(armaNum >= 3)
+            {
+                armaNum = 1;
+            }
+            if (armaNum == 1)
+            {
+                arma.sprite = arma_01;
+            }
+            else
+            {
+                arma.sprite = arma_02;
+            }
+           
+        }
+        if (Input.GetKeyDown(KeyCode.Space) && tocaChao == true)
+        {
+            anim.SetBool("noChao", false);
+            tocaChao = false;
+            rb2d.AddForce(new Vector2(0, 1000));
+        }
 	}
 
 	void FixedUpdate()
@@ -65,12 +105,12 @@ public class PlayerController : MonoBehaviour {
 		transform.Rotate (0, 0, 0);
 		if (translationX != 0) {
 			anim.SetTrigger ("corre");
-            Debug.Log("correndo");
+            
 		} else {
 			anim.SetTrigger("parado");
-            Debug.Log("parado");
+            
         }
-
+        
 		//Programar o pulo Aqui! 
 
 		if (translationX > 0 && !viradoDireita) {
@@ -80,7 +120,17 @@ public class PlayerController : MonoBehaviour {
 		}
 
 	}
-	void Flip()
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.CompareTag("Chao"))
+        {
+            anim.SetBool("noChao", true);
+            tocaChao = true;
+            
+        }
+    }
+
+    void Flip()
 	{
 		viradoDireita = !viradoDireita;
 		Vector3 escala = transform.localScale;
@@ -96,5 +146,5 @@ public class PlayerController : MonoBehaviour {
 			Destroy(gameObject);
 		}
 	}
-	
+    
 }

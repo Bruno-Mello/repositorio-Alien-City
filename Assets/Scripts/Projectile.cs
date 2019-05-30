@@ -23,7 +23,8 @@ public class Projectile : MonoBehaviour
     {
      if(!collision.gameObject.CompareTag("Player"))
         {
-            Destroy(gameObject);
+            anim.SetTrigger("hit");
+            Destroy(gameObject, 0.1f);
         }
     }
 }
